@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+  postgres15:
+    container_name: postgres15
+    image: postgres:15-alpine
+    ports:
+      - "5532:5432"
+    environment:
+      POSTGRES_PASSWORD: 181277
+      POSTGRES_DB: AFRAC
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - afrac
+
+  service-order:
+    container_name: service-order
+    image: estarlinlopez/service-order
+#    build:
+#      context: ./
+#      dockerfile: ./Dockerfile
+    ports:
+      - "8000:7000"
+    environment:
+      DB_HOST: postgres15
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: 181277
+      DB_DATABASE: AFRAC
+    networks:
+      - afrac
+    depends_on:
+      - postgres15
+    restart: always
+
+volumes:
+  data-postgres:
+    name: data-postgres
+
+networks:
+  afrac:
+    name: afrac
